@@ -1,0 +1,55 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.1.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id 'jacoco'
+	id "org.sonarqube" version "3.0"
+	id 'info.solidsoft.pitest' version '1.5.1'
+}
+
+group = 'com.greenlearner'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+test {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+jacoco{
+	toolVersion = "0.8.5"
+//	reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+jacocoTestReport {
+	dependsOn test // tests are required to run before generating the report
+	reports {
+		xml.enabled true
+		csv.enabled false
+//		html.destination file("${buildDir}/jacocoHtml")
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectName", "Covid Alert Service"
+//		property "sonar.branch.name", "test branch"
+		property "sonar.host.url", "http://localhost:9000"
+//		property "sonar.login", "493c84f9bf51f58c9d620d292c4335d1897ed300"
+	}
+}
+pitest {
+	junit5PluginVersion = '0.12'
+	timestampedReports = false
+	outputFormats = ['XML', 'HTML']
+}
